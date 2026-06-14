@@ -1,3 +1,12 @@
+@font-face {
+  font-family: 'Sublime';
+  src: url('/fonts/Sublime.woff2') format('woff2'),
+       url('/fonts/Sublime.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --yellow: #F5C518;
   --yellow-dim: #C9A214;
@@ -26,7 +35,7 @@
   --transition: 0.18s ease;
   --sidebar-width: 240px;
   --header-height: 60px;
-  --font-heading: 'Space Grotesk', sans-serif;
+  --font-heading: 'Sublime', 'Space Grotesk', sans-serif;
   --font-body: 'Inter', sans-serif;
   --font-mono: 'Space Mono', monospace;
 }
