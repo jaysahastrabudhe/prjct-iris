@@ -83,4 +83,50 @@ router.post('/insight', async (req, res) => {
   }
 });
 
+// Daily digest — one call per user per day. Returns a JSON summary.
+// Caller should cache the result for 24 hours.
+router.post('/digest', async (req, res) => {
+  const { tasks = [], projects = [], metrics = {} } = req.body;
+
+  const overdue = tasks.filter(t => t.due_date && t.status !== 'done' && new Date(t.due_date) < new Date()).length;
+  const inProgress = tasks.filter(t => t.status === 'in_progress').length;
+  const blocked = tasks.filter(t => t.status === 'review').length;
+  const urgent = tasks.filter(t => t.priority === 'urgent' && t.status !== 'done').length;
+
+  const taskSummary = tasks.slice(0, 12).map(t =>
+    `${t.title} [${t.priority}/${t.status}${t.due_date ? ', due ' + t.due_date.slice(0,10) : ''}]`
+  ).join('\n');
+
+  const projectSummary = projects.slice(0, 6).map(p =>
+    `${p.name} — ${p.done_count || 0}/${p.task_count || 0} done`
+  ).join('\n');
+
+  try {
+    const text = await callGemini(
+      `You are a productivity analyst. Given this snapshot, return a JSON object with these exact keys.
+Tasks (${tasks.length} total, ${overdue} overdue, ${urgent} urgent, ${inProgress} in-progress, ${blocked} in-review):
+${taskSummary || '(none)'}
+
+Projects:
+${projectSummary || '(none)'}
+
+Metrics: pomodoros=${metrics.pomodoros || 0}, context_switches=${metrics.switches || 0}, focus_score=${metrics.score || 0}
+
+Return ONLY valid JSON, no markdown, no explanation:
+{
+  "headline": "one punchy sentence on today's biggest priority",
+  "priority_task": "name of the single most important task to complete today",
+  "priority_reason": "why (1 sentence)",
+  "risk": "biggest risk this week (1 sentence, or null if none)",
+  "tip": "one specific, actionable productivity tip based on the data"
+}`
+    );
+    const match = text.match(/\{[\s\S]*\}/);
+    const digest = match ? JSON.parse(match[0]) : { headline: text };
+    res.json({ digest, cached_at: new Date().toISOString() });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;

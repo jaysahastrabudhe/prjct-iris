@@ -7,6 +7,7 @@ import { Task, Project, User } from '../types';
 import { format, subDays, isBefore, parseISO } from 'date-fns';
 import NewTaskModal from '../components/Tasks/NewTaskModal';
 import NewProjectPanel from '../components/Tasks/NewProjectPanel';
+import DashboardInsights from '../components/AI/DashboardInsights';
 
 const STATUS_COLORS: Record<string, string> = {
   todo: '#606060', in_progress: '#3B82F6', review: '#A855F7', done: '#22C55E',
@@ -149,6 +150,9 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+
+        {/* AI Insights + Smart Alerts */}
+        <DashboardInsights tasks={tasks} projects={projects} />
 
         {/* Charts row 1 */}
         <div className="charts-grid">

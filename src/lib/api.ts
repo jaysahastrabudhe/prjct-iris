@@ -56,5 +56,6 @@ export const api = {
     breakdown: (title: string, description?: string) => request<{ subtasks: string[] }>('/ai/breakdown', { method: 'POST', body: JSON.stringify({ title, description }) }),
     enhance: (title: string, description?: string) => request<{ description: string }>('/ai/enhance', { method: 'POST', body: JSON.stringify({ title, description }) }),
     insight: (tasks: any[]) => request<{ insight: string }>('/ai/insight', { method: 'POST', body: JSON.stringify({ tasks }) }),
+    digest: (tasks: any[], projects: any[], metrics: any) => request<{ digest: any; cached_at: string }>('/ai/digest', { method: 'POST', body: JSON.stringify({ tasks, projects, metrics }) }),
   },
 };
