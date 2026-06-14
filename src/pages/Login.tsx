@@ -30,7 +30,12 @@ export default function Login() {
       if (err.message?.includes('waitlist') || err.message?.includes('Access restricted')) {
         setWaitlistRedirect(true);
       }
-      setError(err.message);
+      const msg = err.message || '';
+      if (msg.includes('could not connect') || msg.includes('Failed to fetch') || msg.includes('NetworkError')) {
+        setError('Cannot reach the server. If you're on the live site, the backend may not be deployed yet.');
+      } else {
+        setError(msg);
+      }
     } finally {
       setLoading(false);
     }
