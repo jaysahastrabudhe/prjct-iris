@@ -75,15 +75,15 @@ function NotchSlider({ labels, value, onChange, color = 'var(--yellow)' }: {
 /* ── Mini Kanban mockup ────────────────────────────────────────── */
 const MOCK_TASKS = {
   todo: [
-    { t: 'Instagram carousel — Q3', tag: 'Design', color: '#A855F7' },
-    { t: 'Twitter thread — product launch', tag: 'Copy', color: '#3B82F6' },
+    { t: 'Refactor auth middleware', tag: 'Backend', color: '#A855F7' },
+    { t: 'Q3 roadmap planning', tag: 'Strategy', color: '#3B82F6' },
   ],
   in_progress: [
-    { t: 'LinkedIn ad creative', tag: 'Urgent', color: '#FF4D4D' },
-    { t: 'TikTok script review', tag: 'Review', color: '#F97316' },
+    { t: 'Onboarding flow redesign', tag: 'Urgent', color: '#FF4D4D' },
+    { t: 'API rate limit review', tag: 'Review', color: '#F97316' },
   ],
   done: [
-    { t: 'Brand guidelines PDF', tag: 'Done', color: '#22C55E' },
+    { t: 'Database migration v2', tag: 'Done', color: '#22C55E' },
   ],
 };
 
@@ -222,25 +222,25 @@ const FEATURE_TABS = [
 const FEATURE_DETAILS: Record<string, { title: string; desc: string; bullets: string[]; preview: JSX.Element }> = {
   kanban: {
     title: 'Visual Kanban Board',
-    desc: 'Drag tasks across columns. See your entire social content pipeline at a glance — filtered by project or assignee.',
-    bullets: ['Drag-and-drop across 4 stages', 'Per-column task count', 'Priority & due date on cards', 'Filter by project or assignee'],
+    desc: 'Drag tasks across columns. See your entire project pipeline at a glance — with age badges that surface stale work automatically.',
+    bullets: ['Drag-and-drop across 4 stages', 'Age badges flag stale tasks', 'Priority & due date on cards', 'Filter by project or assignee'],
     preview: <MiniKanban />,
   },
   dashboard: {
-    title: 'Live Analytics Dashboard',
-    desc: 'Area charts, bar charts, and pie breakdowns — all live. Know exactly where your team stands without asking.',
-    bullets: ['Task activity for last 7 days', 'Status & priority breakdown', 'Per-project progress bars', 'Overdue alerts at a glance'],
+    title: 'Focus & Productivity Dashboard',
+    desc: 'Your Focus Score, Pomodoro count, context switches, and AI digest — all in one place. Know exactly how productive your day was.',
+    bullets: ['Daily Focus Score (0–100)', 'Pomodoro + distraction tracking', 'Context switch counter', 'AI-generated daily digest'],
     preview: <MiniDashboard />,
   },
   calendar: {
-    title: 'Content Calendar',
-    desc: 'See every deadline plotted on a calendar. Plan campaigns and spot clashes before they happen.',
-    bullets: ['Monthly calendar view', 'Color-coded by project', 'Click to open any task', 'Never miss a posting date'],
+    title: 'Deadline Calendar',
+    desc: 'See every task deadline plotted on a calendar. Spot clashes and plan deep work blocks before they happen.',
+    bullets: ['Monthly calendar view', 'Color-coded by project', 'Click to open any task', 'Never miss a deadline again'],
     preview: <MiniCalendar />,
   },
   workload: {
     title: 'Team Workload View',
-    desc: 'See who is at capacity and who has room. Balance assignments before someone burns out.',
+    desc: 'See who is at capacity and who has bandwidth. Balance assignments before someone hits burnout.',
     bullets: ['Capacity bars per team member', 'Overloaded members flagged red', 'Drag tasks to rebalance', 'Manager-level access only'],
     preview: <MiniWorkload />,
   },
@@ -310,7 +310,7 @@ export default function Landing() {
           fontSize: 11, fontWeight: 700, color: 'var(--yellow)',
           fontFamily: 'var(--font-mono)', letterSpacing: 1, textTransform: 'uppercase',
         }}>
-          <Zap size={10} /> Built for social media marketing teams
+          <Zap size={10} /> AI-powered productivity &amp; project management
         </div>
 
         <h1 className="reveal" style={{
@@ -319,15 +319,15 @@ export default function Landing() {
           letterSpacing: '-2.5px', lineHeight: 1.02,
           marginBottom: 18,
         }}>
-          Ship social content<br />
-          <span className="gradient-text">without the chaos.</span>
+          Deep work, not<br />
+          <span className="gradient-text">busywork.</span>
         </h1>
 
         <p className="reveal" style={{
           fontSize: 16, color: 'var(--text-2)', maxWidth: 500, margin: '0 auto 36px',
           lineHeight: 1.65,
         }}>
-          The command center for social media teams. Kanban boards, content calendars, live dashboards, workload views, and in-browser reminders — all in one place.
+          The focus-first productivity hub. Kanban boards, Pomodoro timer, AI Daily Digest, Focus Score, smart alerts, and context switching tracker — built around how your brain actually works.
         </p>
 
         <div className="reveal" style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 14 }}>
@@ -337,7 +337,7 @@ export default function Landing() {
           <button className="btn btn-ghost btn-lg" onClick={() => navigate('/login')}>Sign In</button>
         </div>
         <div className="reveal" style={{ fontSize: 11, color: 'var(--text-3)', fontFamily: 'var(--font-mono)' }}>
-          ✓ Live in 60 seconds &nbsp;·&nbsp; ✓ Neon DB backed &nbsp;·&nbsp; ✓ Role-based access
+          ✓ Live in 60 seconds &nbsp;·&nbsp; ✓ AI-powered digest &nbsp;·&nbsp; ✓ Pomodoro + Focus Score
         </div>
       </section>
 
@@ -345,10 +345,10 @@ export default function Landing() {
       <section style={{ padding: '0 40px 60px', maxWidth: 1080, margin: '0 auto' }}>
         <div className="reveal glass" style={{ borderRadius: 14, padding: '24px 32px', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 0 }}>
           {[
-            { n: 340, suffix: '+', label: 'Tasks tracked', sub: 'across all projects' },
-            { n: 12, suffix: '+', label: 'Projects managed', sub: 'per workspace avg' },
-            { n: 100, suffix: '%', label: 'Browser native', sub: 'no external app needed' },
-            { n: 3, suffix: ' roles', label: 'Access levels', sub: 'Admin · Manager · Member' },
+            { n: 275, suffix: '+', label: 'Interruptions/day', sub: 'the average knowledge worker' },
+            { n: 4, suffix: 'h', label: 'Lost weekly to tabs', sub: '1,200 app switches/day avg' },
+            { n: 60, suffix: '%', label: 'Work is overhead', sub: 'not actual output' },
+            { n: 21, suffix: ' mtgs', label: 'Meetings/week avg', sub: 'we help you cut that noise' },
           ].map(({ n, suffix, label, sub }, i) => (
             <div key={label} style={{
               textAlign: 'center', padding: '0 20px',
@@ -423,7 +423,7 @@ export default function Landing() {
       <section style={{ padding: '0 40px 80px', maxWidth: 1080, margin: '0 auto' }}>
         <div className="reveal" style={{ textAlign: 'center', marginBottom: 40 }}>
           <div style={{ fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--text-3)', fontFamily: 'var(--font-mono)', marginBottom: 10 }}>Everything you need</div>
-          <h2 style={{ fontSize: 34, fontWeight: 700, fontFamily: 'var(--font-heading)', letterSpacing: '-1px' }}>One tool. Zero context switching.</h2>
+          <h2 style={{ fontSize: 34, fontWeight: 700, fontFamily: 'var(--font-heading)', letterSpacing: '-1px' }}>One hub. Zero distractions.</h2>
         </div>
         <div className="bento-grid reveal">
 
@@ -433,14 +433,14 @@ export default function Landing() {
               <div style={{ width: 36, height: 36, borderRadius: 9, background: 'rgba(245,197,24,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12, color: 'var(--yellow)' }}>
                 <Bell size={18} />
               </div>
-              <div style={{ fontSize: 16, fontWeight: 700, fontFamily: 'var(--font-heading)', marginBottom: 6 }}>In-Browser Reminders</div>
-              <div style={{ fontSize: 12, color: 'var(--text-2)', lineHeight: 1.6 }}>Set per-task reminders. They fire as native browser notifications — no app, no email, no friction.</div>
+              <div style={{ fontSize: 16, fontWeight: 700, fontFamily: 'var(--font-heading)', marginBottom: 6 }}>Smart Reminders</div>
+              <div style={{ fontSize: 12, color: 'var(--text-2)', lineHeight: 1.6 }}>Set per-task reminders. They fire as native browser notifications or email — no extra app, no friction.</div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, justifyContent: 'center', minWidth: 160 }}>
               {[
-                { t: 'Instagram post', time: 'in 2h', color: '#F5C518' },
-                { t: 'Client approval', time: 'Tomorrow 9am', color: '#22C55E' },
-                { t: 'Campaign brief', time: 'Overdue', color: '#FF4D4D' },
+                { t: 'Deep work block', time: 'in 2h', color: '#F5C518' },
+                { t: 'Code review due', time: 'Tomorrow 9am', color: '#22C55E' },
+                { t: 'Sprint planning', time: 'Overdue', color: '#FF4D4D' },
               ].map(r => (
                 <div key={r.t} style={{
                   background: 'rgba(255,255,255,0.05)', borderRadius: 8, padding: '8px 10px',
@@ -504,8 +504,8 @@ export default function Landing() {
               <div style={{ width: 36, height: 36, borderRadius: 9, background: 'rgba(59,130,246,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12, color: '#3B82F6' }}>
                 <Workflow size={18} />
               </div>
-              <div style={{ fontSize: 16, fontWeight: 700, fontFamily: 'var(--font-heading)', marginBottom: 6 }}>Approval Workflow</div>
-              <div style={{ fontSize: 12, color: 'var(--text-2)', lineHeight: 1.6 }}>Move content through Draft → Review → Approved → Published. Never ship unapproved content.</div>
+              <div style={{ fontSize: 16, fontWeight: 700, fontFamily: 'var(--font-heading)', marginBottom: 6 }}>Task Workflow Engine</div>
+              <div style={{ fontSize: 12, color: 'var(--text-2)', lineHeight: 1.6 }}>Move work through To Do → In Progress → Review → Done. Every handoff is tracked with a timestamp.</div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6, justifyContent: 'center', minWidth: 160 }}>
               {['Draft', 'In Review', 'Approved', 'Published'].map((s, i) => (
@@ -557,9 +557,9 @@ export default function Landing() {
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
           {[
-            { n: '01', icon: Zap, title: 'Create workspace', desc: 'Register your agency. Create projects for each client or campaign in seconds.', color: '#F5C518' },
-            { n: '02', icon: Users, title: 'Invite your team', desc: 'Add members with role-based access. Assign tasks, set due dates, enable reminders.', color: '#A855F7' },
-            { n: '03', icon: TrendingUp, title: 'Ship faster', desc: 'Move cards through Kanban, track progress on the dashboard, never miss a deadline.', color: '#22C55E' },
+            { n: '01', icon: Zap, title: 'Set up in 60s', desc: 'Create your workspace, add projects, and start dropping tasks into Kanban in under a minute.', color: '#F5C518' },
+            { n: '02', icon: Users, title: 'Invite your team', desc: 'Add members with role-based access. Assign tasks, set due dates, and enable smart reminders.', color: '#A855F7' },
+            { n: '03', icon: TrendingUp, title: 'Focus and ship', desc: 'Start a Pomodoro, track your Focus Score, let the AI digest surface what matters — and ship.', color: '#22C55E' },
           ].map(({ n, icon: Icon, title, desc, color }, i) => (
             <div key={n} className={`reveal glass bento-card`} style={{ animationDelay: `${i * 0.1}s`, gridColumn: 'span 1' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
@@ -581,7 +581,7 @@ export default function Landing() {
       {/* ── Roles ── */}
       <section style={{ padding: '0 40px 80px', maxWidth: 1080, margin: '0 auto' }}>
         <div className="reveal" style={{ textAlign: 'center', marginBottom: 44 }}>
-          <h2 style={{ fontSize: 34, fontWeight: 700, fontFamily: 'var(--font-heading)', letterSpacing: '-1px' }}>Role-based access control</h2>
+          <h2 style={{ fontSize: 34, fontWeight: 700, fontFamily: 'var(--font-heading)', letterSpacing: '-1px' }}>Built for individuals &amp; teams</h2>
           <p style={{ fontSize: 14, color: 'var(--text-2)', marginTop: 10 }}>Everyone gets exactly the access they need — nothing more.</p>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
@@ -628,10 +628,10 @@ export default function Landing() {
             <Sparkles size={11} /> Free to start, no credit card
           </div>
           <h2 style={{ fontSize: 38, fontWeight: 700, fontFamily: 'var(--font-heading)', letterSpacing: '-1.5px', marginBottom: 12 }}>
-            Ready to take control?
+            Reclaim your focus.
           </h2>
           <p style={{ fontSize: 15, color: 'var(--text-2)', marginBottom: 32 }}>
-            Set up your team's workspace in under a minute.
+            Set up your workspace in under a minute. Start your first Pomodoro in two.
           </p>
           <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
             <button className="btn btn-primary btn-lg glow-yellow" onClick={() => navigate('/login?mode=register')}>
@@ -657,7 +657,7 @@ export default function Landing() {
             </svg>
           </div>
           <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: 13 }}>PRJCT Iris</span>
-          <span style={{ fontSize: 11, color: 'var(--text-3)', fontFamily: 'var(--font-mono)' }}>— Social Media Command Center</span>
+          <span style={{ fontSize: 11, color: 'var(--text-3)', fontFamily: 'var(--font-mono)' }}>— Productivity &amp; Project Hub</span>
         </div>
         <span style={{ fontSize: 11, color: 'var(--text-3)', fontFamily: 'var(--font-mono)' }}>
           Neon DB · React 18 · Express · Space Grotesk
