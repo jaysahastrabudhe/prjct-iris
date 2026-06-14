@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Layout from './components/Layout/Layout';
@@ -9,6 +10,7 @@ import TaskList from './pages/TaskList';
 import Team from './pages/Team';
 import Focus from './pages/Focus';
 import AIAssistant from './components/AI/AIAssistant';
+import CommandPalette from './components/CommandPalette';
 
 function Spinner() {
   return (
@@ -23,12 +25,15 @@ function Spinner() {
         <span style={{ fontFamily: 'var(--font-heading)', fontSize: 18, fontWeight: 700 }}>PRJCT Iris</span>
       </div>
       <div className="spinner" />
+      <span style={{ fontSize: 12, color: 'var(--text-3)', fontFamily: 'var(--font-mono)' }}>Loading PRJCT Iris…</span>
     </div>
   );
 }
 
 function ProtectedRoutes() {
   const { user, loading } = useAuth();
+  const [showNewTask, setShowNewTask] = useState(false);
+  const [showNewProject, setShowNewProject] = useState(false);
   if (loading) return <Spinner />;
   if (!user) return <Navigate to="/login" replace />;
   return (
@@ -42,6 +47,7 @@ function ProtectedRoutes() {
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
       <AIAssistant />
+      <CommandPalette onNewTask={() => setShowNewTask(true)} onNewProject={() => setShowNewProject(true)} />
     </Layout>
   );
 }

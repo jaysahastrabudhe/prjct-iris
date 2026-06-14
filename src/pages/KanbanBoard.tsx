@@ -65,6 +65,14 @@ export default function KanbanBoard() {
     return '';
   }
 
+  function ageBadge(updatedAt: string) {
+    const days = differenceInDays(new Date(), parseISO(updatedAt));
+    if (days < 2) return null;
+    const cls = days >= 7 ? 'critical' : days >= 3 ? 'stale' : '';
+    const label = days >= 7 ? `${days}d ⚠` : `${days}d`;
+    return <span className={`age-badge ${cls}`}>{label}</span>;
+  }
+
   return (
     <>
       <Header title="Kanban Board" onNewTask={() => { setNewTaskStatus('todo'); setShowNewTask(true); }} />
@@ -118,7 +126,10 @@ export default function KanbanBoard() {
                                 {...prov.draggableProps}
                                 {...prov.dragHandleProps}
                               >
-                                <div className="task-card-title">{task.title}</div>
+                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6, marginBottom: 10 }}>
+                                  <div className="task-card-title" style={{ marginBottom: 0, flex: 1 }}>{task.title}</div>
+                                  {ageBadge(task.updated_at)}
+                                </div>
                                 <div className="task-card-meta">
                                   <span className={`badge badge-${task.priority}`}>{task.priority}</span>
                                   {task.project_name && (
@@ -154,8 +165,12 @@ export default function KanbanBoard() {
                         ))}
                         {provided.placeholder}
                         {colTasks.length === 0 && !snapshot.isDraggingOver && (
-                          <div style={{ textAlign: 'center', padding: '20px 10px', color: 'var(--text-3)', fontSize: 11 }}>
-                            Drop tasks here
+                          <div
+                            className="kanban-empty"
+                            onClick={() => { setNewTaskStatus(col.id); setShowNewTask(true); }}
+                          >
+                            <Plus size={13} />
+                            Add task to {col.label}
                           </div>
                         )}
                       </div>

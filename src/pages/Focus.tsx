@@ -106,7 +106,9 @@ export default function Focus() {
   }
 
   function requestNotifPerm() {
-    if ('Notification' in window) Notification.requestPermission();
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
   }
 
   function addDistr() {
@@ -204,7 +206,7 @@ export default function Focus() {
                 />
               </svg>
               <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ fontSize: 48, fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text-1)', letterSpacing: -2 }}>
+                <div style={{ fontSize: 48, fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text)', letterSpacing: -2 }}>
                   {mins}:{secs}
                 </div>
                 <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 4 }}>{session.label}</div>

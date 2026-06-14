@@ -66,6 +66,15 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   const { title, description, status, priority, due_date, reminder_at, assignee_id, tags, position } = req.body;
   try {
+    const [access] = await sql`
+      SELECT t.id FROM tasks t
+      JOIN projects p ON p.id = t.project_id
+      LEFT JOIN project_members pm ON pm.project_id = t.project_id
+      WHERE t.id = ${req.params.id}
+        AND (p.owner_id = ${req.user.id} OR pm.user_id = ${req.user.id})
+    `;
+    if (!access) return res.status(403).json({ error: 'Forbidden' });
+
     const [task] = await sql`
       UPDATE tasks SET
         title = COALESCE(${title}, title),
@@ -99,6 +108,15 @@ router.put('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   try {
+    const [access] = await sql`
+      SELECT t.id FROM tasks t
+      JOIN projects p ON p.id = t.project_id
+      LEFT JOIN project_members pm ON pm.project_id = t.project_id
+      WHERE t.id = ${req.params.id}
+        AND (p.owner_id = ${req.user.id} OR pm.user_id = ${req.user.id})
+    `;
+    if (!access) return res.status(403).json({ error: 'Forbidden' });
+
     await sql`DELETE FROM tasks WHERE id = ${req.params.id}`;
     res.json({ ok: true });
   } catch (err) {

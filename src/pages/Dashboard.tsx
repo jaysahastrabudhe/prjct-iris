@@ -38,6 +38,7 @@ export default function Dashboard() {
   const [showNewTask, setShowNewTask] = useState(false);
   const [showNewProject, setShowNewProject] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const ctxSwitches = getTodayValue('iris_ctx_switches');
   const pomodoros = getTodayValue('iris_pomodoros');
@@ -48,6 +49,7 @@ export default function Dashboard() {
   useEffect(() => {
     Promise.all([api.tasks.list(), api.projects.list(), api.users.list()])
       .then(([t, p, u]) => { setTasks(t); setProjects(p); setUsers(u); })
+      .catch(() => setError('Failed to load workspace data. Check your connection and try again.'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -72,6 +74,20 @@ export default function Dashboard() {
   }));
 
   function initials(name: string) { return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2); }
+
+  if (error) return (
+    <>
+      <Header title="Dashboard" onNewTask={() => setShowNewTask(true)} />
+      <div className="page-body" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}>
+        <div className="empty-state">
+          <div className="empty-state-icon">⚠️</div>
+          <h3>Couldn't load your workspace</h3>
+          <p style={{ marginBottom: 16 }}>{error}</p>
+          <button className="btn btn-primary btn-sm" onClick={() => { setError(null); setLoading(true); Promise.all([api.tasks.list(), api.projects.list(), api.users.list()]).then(([t, p, u]) => { setTasks(t); setProjects(p); setUsers(u); }).catch(() => setError('Still failing. Check the server is running.')).finally(() => setLoading(false)); }}>Retry</button>
+        </div>
+      </div>
+    </>
+  );
 
   return (
     <>
@@ -141,7 +157,7 @@ export default function Dashboard() {
               <TrendingUp size={14} style={{ color: ctxSwitches > 10 ? '#FF4D4D' : '#A855F7' }} />
               <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-2)' }}>Context Switches</span>
             </div>
-            <div style={{ fontSize: 36, fontWeight: 800, color: ctxSwitches > 10 ? '#FF4D4D' : 'var(--text-1)', lineHeight: 1 }}>{ctxSwitches}</div>
+            <div style={{ fontSize: 36, fontWeight: 800, color: ctxSwitches > 10 ? '#FF4D4D' : 'var(--text)', lineHeight: 1 }}>{ctxSwitches}</div>
             <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 6 }}>
               {ctxSwitches <= 5 ? '✓ Excellent focus — low switching' : ctxSwitches <= 10 ? '~ Moderate switching today' : '⚠ High switching costs ~23min each'}
             </div>

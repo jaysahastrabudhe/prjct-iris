@@ -145,7 +145,8 @@ export default function DashboardInsights({ tasks, projects }: Props) {
 
   const switches = (() => { try { const d = JSON.parse(localStorage.getItem('iris_ctx_switches') || '{}'); return d[getTodayKey()] || 0; } catch { return 0; } })();
   const pomodoros = (() => { try { const d = JSON.parse(localStorage.getItem('iris_pomodoros') || '{}'); return d[getTodayKey()] || 0; } catch { return 0; } })();
-  const focusScore = Math.max(0, Math.min(100, Math.min(pomodoros * 20, 60) - Math.min(switches * 4, 30) + 10));
+  const distractions = (() => { try { const d = JSON.parse(localStorage.getItem('iris_distractions') || '{}'); return d[getTodayKey()] || 0; } catch { return 0; } })();
+  const focusScore = Math.max(0, Math.min(100, Math.min(pomodoros * 20, 60) - Math.min(switches * 4, 30) - Math.min(distractions * 5, 20) + 10));
 
   const alerts = buildAlerts(tasks, projects, switches).filter(a => !dismissed.has(a.id));
 

@@ -142,7 +142,7 @@ function MiniDashboard() {
           </div>
         ))}
       </div>
-      <div style={{ display: 'flex', align: 'flex-end', gap: 4, alignItems: 'flex-end', height: 50 }}>
+      <div style={{ display: 'flex', gap: 4, alignItems: 'flex-end', height: 50 }}>
         {bars.map((h, i) => (
           <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
             <div style={{
