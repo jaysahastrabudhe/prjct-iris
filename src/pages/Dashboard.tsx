@@ -1,34 +1,31 @@
 import { useEffect, useState } from 'react';
 import { AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { Layers, CheckSquare, Users, TrendingUp, Plus, ArrowUpRight } from 'lucide-react';
+import { Layers, CheckSquare, Users, TrendingUp, Plus, ArrowUpRight, Timer, Brain } from 'lucide-react';
 import Header from '../components/Layout/Header';
 import { api } from '../lib/api';
 import { Task, Project, User } from '../types';
-import { format, subDays, isAfter, isBefore, parseISO } from 'date-fns';
+import { format, subDays, isBefore, parseISO } from 'date-fns';
 import NewTaskModal from '../components/Tasks/NewTaskModal';
+import NewProjectPanel from '../components/Tasks/NewProjectPanel';
 
 const STATUS_COLORS: Record<string, string> = {
-  todo: '#606060',
-  in_progress: '#3B82F6',
-  review: '#A855F7',
-  done: '#22C55E',
+  todo: '#606060', in_progress: '#3B82F6', review: '#A855F7', done: '#22C55E',
+};
+const PRIORITY_COLORS: Record<string, string> = {
+  low: '#606060', medium: '#3B82F6', high: '#F97316', urgent: '#FF4D4D',
 };
 
-const PRIORITY_COLORS: Record<string, string> = {
-  low: '#606060',
-  medium: '#3B82F6',
-  high: '#F97316',
-  urgent: '#FF4D4D',
-};
+function getTodayKey() { return new Date().toISOString().slice(0, 10); }
+function getTodayValue(key: string, def = 0): number {
+  try { const d = JSON.parse(localStorage.getItem(key) || '{}'); return d[getTodayKey()] ?? def; } catch { return def; }
+}
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
     <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 8, padding: '10px 14px', fontSize: 12 }}>
       <div style={{ color: 'var(--text-2)', marginBottom: 4 }}>{label}</div>
-      {payload.map((p: any) => (
-        <div key={p.name} style={{ color: p.color, fontWeight: 600 }}>{p.name}: {p.value}</div>
-      ))}
+      {payload.map((p: any) => <div key={p.name} style={{ color: p.color, fontWeight: 600 }}>{p.name}: {p.value}</div>)}
     </div>
   );
 };
@@ -38,7 +35,14 @@ export default function Dashboard() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [showNewTask, setShowNewTask] = useState(false);
+  const [showNewProject, setShowNewProject] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const ctxSwitches = getTodayValue('iris_ctx_switches');
+  const pomodoros = getTodayValue('iris_pomodoros');
+  const distractions = getTodayValue('iris_distractions');
+  const focusScore = Math.max(0, Math.min(100, Math.min(pomodoros * 20, 60) - Math.min(ctxSwitches * 4, 30) - Math.min(distractions * 5, 20) + 10));
+  const scoreColor = focusScore >= 70 ? '#22C55E' : focusScore >= 40 ? '#F5C518' : '#FF4D4D';
 
   useEffect(() => {
     Promise.all([api.tasks.list(), api.projects.list(), api.users.list()])
@@ -50,7 +54,6 @@ export default function Dashboard() {
   const inProgress = tasks.filter(t => t.status === 'in_progress').length;
   const overdue = tasks.filter(t => t.due_date && t.status !== 'done' && isBefore(parseISO(t.due_date), new Date())).length;
 
-  // Activity chart — tasks completed per day for last 7 days
   const activityData = Array.from({ length: 7 }, (_, i) => {
     const day = subDays(new Date(), 6 - i);
     const label = format(day, 'EEE');
@@ -59,23 +62,15 @@ export default function Dashboard() {
     return { day: label, Created: created, Completed: completed };
   });
 
-  // Status pie
   const statusData = ['todo', 'in_progress', 'review', 'done'].map(s => ({
-    name: s.replace('_', ' '),
-    value: tasks.filter(t => t.status === s).length,
-    color: STATUS_COLORS[s],
+    name: s.replace('_', ' '), value: tasks.filter(t => t.status === s).length, color: STATUS_COLORS[s],
   })).filter(d => d.value > 0);
 
-  // Priority bar
   const priorityData = ['low', 'medium', 'high', 'urgent'].map(p => ({
-    priority: p,
-    count: tasks.filter(t => t.priority === p).length,
-    fill: PRIORITY_COLORS[p],
+    priority: p, count: tasks.filter(t => t.priority === p).length, fill: PRIORITY_COLORS[p],
   }));
 
-  function initials(name: string) {
-    return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-  }
+  function initials(name: string) { return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2); }
 
   return (
     <>
@@ -86,28 +81,17 @@ export default function Dashboard() {
         <div className="stats-grid">
           <div className="stat-card">
             <div className="stat-icon"><Layers size={18} /></div>
-            <div>
-              <div className="stat-value">{projects.length}</div>
-              <div className="stat-label">Active Projects</div>
-            </div>
-            <div className="stat-delta"><ArrowUpRight size={12} /> All campaigns</div>
+            <div><div className="stat-value">{projects.length}</div><div className="stat-label">Active Projects</div></div>
+            <div className="stat-delta"><ArrowUpRight size={12} /> All running</div>
           </div>
           <div className="stat-card">
             <div className="stat-icon"><CheckSquare size={18} /></div>
-            <div>
-              <div className="stat-value">{tasks.length}</div>
-              <div className="stat-label">Total Tasks</div>
-            </div>
+            <div><div className="stat-value">{tasks.length}</div><div className="stat-label">Total Tasks</div></div>
             <div className="stat-delta" style={{ color: 'var(--text-3)' }}>{done} completed</div>
           </div>
           <div className="stat-card">
-            <div className="stat-icon" style={{ background: 'rgba(59,130,246,0.15)', color: 'var(--blue)' }}>
-              <TrendingUp size={18} />
-            </div>
-            <div>
-              <div className="stat-value">{inProgress}</div>
-              <div className="stat-label">In Progress</div>
-            </div>
+            <div className="stat-icon" style={{ background: 'rgba(59,130,246,0.15)', color: 'var(--blue)' }}><TrendingUp size={18} /></div>
+            <div><div className="stat-value">{inProgress}</div><div className="stat-label">In Progress</div></div>
             <div className="stat-delta" style={{ color: 'var(--blue)' }}><ArrowUpRight size={12} /> Active now</div>
           </div>
           <div className="stat-card">
@@ -116,10 +100,52 @@ export default function Dashboard() {
             </div>
             <div>
               <div className="stat-value" style={{ color: overdue > 0 ? 'var(--red)' : 'inherit' }}>{overdue}</div>
-              <div className="stat-label">Overdue Tasks</div>
+              <div className="stat-label">Overdue</div>
             </div>
-            <div className="stat-delta" style={{ color: overdue > 0 ? 'var(--red)' : 'var(--green)' }}>
-              {overdue > 0 ? '⚠ Needs attention' : '✓ On track'}
+            <div className="stat-delta" style={{ color: overdue > 0 ? 'var(--red)' : 'var(--green)' }}>{overdue > 0 ? '⚠ Needs attention' : '✓ On track'}</div>
+          </div>
+        </div>
+
+        {/* Productivity widgets row */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 24 }}>
+          <div className="card" style={{ padding: '16px 18px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+              <Brain size={14} style={{ color: scoreColor }} />
+              <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-2)' }}>Focus Score</span>
+            </div>
+            <div style={{ fontSize: 36, fontWeight: 800, color: scoreColor, lineHeight: 1 }}>{focusScore}</div>
+            <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 6 }}>
+              {focusScore >= 70 ? 'Great focus today!' : focusScore >= 40 ? 'Room to improve' : 'Start a pomodoro session'}
+            </div>
+            <div style={{ marginTop: 10, height: 4, background: 'var(--surface-2)', borderRadius: 99 }}>
+              <div style={{ height: '100%', borderRadius: 99, width: `${focusScore}%`, background: scoreColor, transition: 'width .5s' }} />
+            </div>
+          </div>
+          <div className="card" style={{ padding: '16px 18px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+              <Timer size={14} style={{ color: '#F5C518' }} />
+              <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-2)' }}>Pomodoros</span>
+            </div>
+            <div style={{ fontSize: 36, fontWeight: 800, lineHeight: 1 }}>{pomodoros}</div>
+            <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 6 }}>
+              {pomodoros === 0 ? 'No sessions yet — visit Focus Mode' : `${Math.round(pomodoros * 25)} min of deep work`}
+            </div>
+            <div style={{ display: 'flex', gap: 4, marginTop: 10 }}>
+              {Array.from({ length: Math.min(pomodoros, 6) }).map((_, i) => <span key={i} style={{ fontSize: 14 }}>🍅</span>)}
+              {pomodoros > 6 && <span style={{ fontSize: 11, color: 'var(--text-3)', alignSelf: 'center' }}>+{pomodoros - 6}</span>}
+            </div>
+          </div>
+          <div className="card" style={{ padding: '16px 18px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+              <TrendingUp size={14} style={{ color: ctxSwitches > 10 ? '#FF4D4D' : '#A855F7' }} />
+              <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-2)' }}>Context Switches</span>
+            </div>
+            <div style={{ fontSize: 36, fontWeight: 800, color: ctxSwitches > 10 ? '#FF4D4D' : 'var(--text-1)', lineHeight: 1 }}>{ctxSwitches}</div>
+            <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 6 }}>
+              {ctxSwitches <= 5 ? '✓ Excellent focus — low switching' : ctxSwitches <= 10 ? '~ Moderate switching today' : '⚠ High switching costs ~23min each'}
+            </div>
+            <div style={{ marginTop: 10, height: 4, background: 'var(--surface-2)', borderRadius: 99 }}>
+              <div style={{ height: '100%', borderRadius: 99, width: `${Math.min((ctxSwitches / 15) * 100, 100)}%`, background: ctxSwitches > 10 ? '#FF4D4D' : ctxSwitches > 5 ? '#F5C518' : '#22C55E', transition: 'width .5s' }} />
             </div>
           </div>
         </div>
@@ -151,7 +177,6 @@ export default function Dashboard() {
               </AreaChart>
             </ResponsiveContainer>
           </div>
-
           <div className="card">
             <div className="section-header" style={{ marginBottom: 20 }}>
               <span className="section-title">Task Status</span>
@@ -185,11 +210,10 @@ export default function Dashboard() {
               </BarChart>
             </ResponsiveContainer>
           </div>
-
           <div className="card">
             <div className="section-header" style={{ marginBottom: 12 }}>
               <span className="section-title">Projects</span>
-              <button className="btn btn-ghost btn-sm" onClick={() => setShowNewTask(true)}><Plus size={12}/> New</button>
+              <button className="btn btn-ghost btn-sm" onClick={() => setShowNewProject(true)}><Plus size={12}/> New Project</button>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {projects.slice(0, 4).map(p => {
@@ -209,7 +233,12 @@ export default function Dashboard() {
                   </div>
                 );
               })}
-              {projects.length === 0 && <div style={{ fontSize: 12, color: 'var(--text-3)' }}>No projects yet</div>}
+              {projects.length === 0 && (
+                <div style={{ textAlign: 'center', padding: '16px 0' }}>
+                  <div style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 10 }}>No projects yet</div>
+                  <button className="btn btn-primary btn-sm" onClick={() => setShowNewProject(true)}><Plus size={12} /> Create First Project</button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -219,16 +248,14 @@ export default function Dashboard() {
           <div className="card">
             <div className="section-header">
               <span className="section-title">Recent Tasks</span>
+              <button className="btn btn-ghost btn-sm" onClick={() => setShowNewTask(true)}><Plus size={12}/> New Task</button>
             </div>
             <div className="activity-feed">
               {tasks.slice(0, 6).map(t => (
                 <div key={t.id} className="activity-item">
                   <div className="activity-dot" style={{ background: STATUS_COLORS[t.status] }} />
                   <div>
-                    <div className="activity-text">
-                      <strong>{t.title}</strong>
-                      {t.project_name && <span> · {t.project_name}</span>}
-                    </div>
+                    <div className="activity-text"><strong>{t.title}</strong>{t.project_name && <span> · {t.project_name}</span>}</div>
                     <div className="activity-time">{format(parseISO(t.created_at), 'MMM d, h:mm a')}</div>
                   </div>
                   <div style={{ marginLeft: 'auto' }}>
@@ -239,7 +266,6 @@ export default function Dashboard() {
               {tasks.length === 0 && <div style={{ fontSize: 12, color: 'var(--text-3)', padding: '20px 0' }}>No tasks yet</div>}
             </div>
           </div>
-
           <div className="card" style={{ maxWidth: 260, flexShrink: 0 }}>
             <div className="section-header" style={{ marginBottom: 14 }}>
               <span className="section-title">Team</span>
@@ -249,16 +275,12 @@ export default function Dashboard() {
                 const assigned = tasks.filter(t => t.assignee_id === u.id).length;
                 return (
                   <div key={u.id} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <div className="avatar" style={{ background: u.avatar_color }}>
-                      {u.name.split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2)}
-                    </div>
+                    <div className="avatar" style={{ background: u.avatar_color }}>{u.name.split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2)}</div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 12, fontWeight: 600 }}>{u.name}</div>
                       <div style={{ fontSize: 11, color: 'var(--text-3)' }}>{assigned} tasks</div>
                     </div>
-                    <span style={{ fontSize: 10, padding: '2px 7px', background: 'var(--surface-2)', borderRadius: 99, color: 'var(--text-3)', fontFamily: 'var(--font-mono)' }}>
-                      {u.role}
-                    </span>
+                    <span style={{ fontSize: 10, padding: '2px 7px', background: 'var(--surface-2)', borderRadius: 99, color: 'var(--text-3)', fontFamily: 'var(--font-mono)' }}>{u.role}</span>
                   </div>
                 );
               })}
@@ -274,6 +296,12 @@ export default function Dashboard() {
           users={users}
           onClose={() => setShowNewTask(false)}
           onCreated={t => { setTasks(prev => [t, ...prev]); setShowNewTask(false); }}
+        />
+      )}
+      {showNewProject && (
+        <NewProjectPanel
+          onClose={() => setShowNewProject(false)}
+          onCreated={p => { setProjects(prev => [p, ...prev]); setShowNewProject(false); }}
         />
       )}
     </>

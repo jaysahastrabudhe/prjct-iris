@@ -47,7 +47,7 @@ export default function Login() {
           </div>
           <div className="auth-title">
             <h2>PRJCT Iris</h2>
-            <span>Social Media Command Center</span>
+            <span>Productivity Hub</span>
           </div>
         </div>
 

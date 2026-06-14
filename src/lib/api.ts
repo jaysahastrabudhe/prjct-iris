@@ -51,4 +51,10 @@ export const api = {
     markRead: (id: string) => request<any>(`/users/notifications/${id}/read`, { method: 'PUT' }),
     markAllRead: () => request<any>('/users/notifications/read-all', { method: 'PUT' }),
   },
+  ai: {
+    standup: (tasks: any[]) => request<{ standup: string }>('/ai/standup', { method: 'POST', body: JSON.stringify({ tasks }) }),
+    breakdown: (title: string, description?: string) => request<{ subtasks: string[] }>('/ai/breakdown', { method: 'POST', body: JSON.stringify({ title, description }) }),
+    enhance: (title: string, description?: string) => request<{ description: string }>('/ai/enhance', { method: 'POST', body: JSON.stringify({ title, description }) }),
+    insight: (tasks: any[]) => request<{ insight: string }>('/ai/insight', { method: 'POST', body: JSON.stringify({ tasks }) }),
+  },
 };

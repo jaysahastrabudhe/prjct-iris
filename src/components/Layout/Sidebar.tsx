@@ -1,13 +1,36 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Columns3, CheckSquare, Users, Settings, LogOut, Zap } from 'lucide-react';
+import { LayoutDashboard, Columns3, CheckSquare, Users, LogOut, Timer } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useEffect, useState } from 'react';
 
 const NAV = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
   { icon: Columns3, label: 'Kanban', path: '/kanban' },
   { icon: CheckSquare, label: 'Tasks', path: '/tasks' },
   { icon: Users, label: 'Team', path: '/team' },
+  { icon: Timer, label: 'Focus Mode', path: '/focus' },
 ];
+
+const CTX_KEY = 'iris_ctx_switches';
+function getTodayKey() { return new Date().toISOString().slice(0, 10); }
+function getTodaySwitches(): number {
+  try {
+    const raw = localStorage.getItem(CTX_KEY);
+    if (!raw) return 0;
+    return JSON.parse(raw)[getTodayKey()] || 0;
+  } catch { return 0; }
+}
+function addContextSwitch() {
+  try {
+    const raw = localStorage.getItem(CTX_KEY);
+    const data = raw ? JSON.parse(raw) : {};
+    const k = getTodayKey();
+    data[k] = (data[k] || 0) + 1;
+    const keys = Object.keys(data).sort();
+    if (keys.length > 7) delete data[keys[0]];
+    localStorage.setItem(CTX_KEY, JSON.stringify(data));
+  } catch {}
+}
 
 function initials(name: string) {
   return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
@@ -17,6 +40,15 @@ export default function Sidebar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const [switches, setSwitches] = useState(getTodaySwitches);
+
+  function nav(path: string) {
+    if (path !== pathname) {
+      addContextSwitch();
+      setSwitches(getTodaySwitches());
+    }
+    navigate(path);
+  }
 
   return (
     <aside className="sidebar">
@@ -29,7 +61,7 @@ export default function Sidebar() {
         </div>
         <div className="logo-text">
           <h1>PRJCT Iris</h1>
-          <span>Social Media Hub</span>
+          <span>Productivity Hub</span>
         </div>
       </div>
 
@@ -41,23 +73,24 @@ export default function Sidebar() {
             <div
               key={path}
               className={`nav-item ${active ? 'active' : ''}`}
-              onClick={() => navigate(path)}
+              onClick={() => nav(path)}
             >
-              <Icon />
+              <Icon size={16} />
               {label}
+              {path === '/focus' && switches > 0 && (
+                <span className="nav-badge" style={{ background: switches > 10 ? '#FF4D4D' : 'var(--yellow)', color: '#000' }}>
+                  {switches}
+                </span>
+              )}
             </div>
           );
         })}
-
-        <div className="nav-section-label" style={{ marginTop: 8 }}>Tools</div>
-        <div className="nav-item">
-          <Zap />
-          Reminders
-          <span className="nav-badge">ON</span>
-        </div>
       </nav>
 
       <div className="sidebar-footer">
+        <div style={{ padding: '6px 12px 10px', fontSize: 10, color: 'var(--text-3)' }}>
+          Context switches today: <strong style={{ color: switches > 10 ? '#FF4D4D' : 'var(--text-2)' }}>{switches}</strong>
+        </div>
         <div className="user-pill" onClick={logout} title="Sign out">
           <div className="avatar" style={{ background: user?.avatar_color || '#F5C518' }}>
             {user ? initials(user.name) : '?'}

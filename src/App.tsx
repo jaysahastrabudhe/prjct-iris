@@ -7,6 +7,8 @@ import Dashboard from './pages/Dashboard';
 import KanbanBoard from './pages/KanbanBoard';
 import TaskList from './pages/TaskList';
 import Team from './pages/Team';
+import Focus from './pages/Focus';
+import AIAssistant from './components/AI/AIAssistant';
 
 function Spinner() {
   return (
@@ -36,8 +38,10 @@ function ProtectedRoutes() {
         <Route path="/kanban" element={<KanbanBoard />} />
         <Route path="/tasks" element={<TaskList />} />
         <Route path="/team" element={<Team />} />
+        <Route path="/focus" element={<Focus />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
+      <AIAssistant />
     </Layout>
   );
 }

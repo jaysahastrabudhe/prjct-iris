@@ -1119,3 +1119,39 @@ select.input { appearance: none; cursor: pointer; }
   animation: pulse 1.5s ease infinite;
   display: inline-block;
 }
+
+/* Slide-in panel (task/project creation) */
+.slide-panel-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 200;
+  backdrop-filter: blur(3px);
+  animation: fadeIn .2s ease;
+}
+.slide-panel {
+  position: fixed; right: 0; top: 0; bottom: 0;
+  width: 480px;
+  background: var(--surface-1, var(--surface));
+  border-left: 1px solid var(--border);
+  z-index: 201;
+  display: flex; flex-direction: column;
+  animation: slideInRight .3s cubic-bezier(0.16,1,0.3,1);
+  box-shadow: -8px 0 40px rgba(0,0,0,0.4);
+}
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* surface-1 alias */
+.slide-panel, .slide-panel > * { --surface-1: var(--surface); }
+
+/* Focus page pomodoro glow */
+@keyframes glowPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
