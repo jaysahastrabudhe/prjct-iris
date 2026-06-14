@@ -283,7 +283,7 @@ export default function Landing() {
               <circle cx="14" cy="13" r="3" fill="#000"/>
             </svg>
           </div>
-          <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: 15, letterSpacing: '-0.3px' }}>PRJCT Iris</span>
+          <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: 15, letterSpacing: '-0.3px' }}>Ironavtar</span>
           <span className="live-dot" style={{ marginLeft: 6, fontSize: 10 }}>Live</span>
         </div>
         <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
@@ -656,7 +656,7 @@ export default function Landing() {
               <circle cx="14" cy="13" r="3" fill="#000"/>
             </svg>
           </div>
-          <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: 13 }}>PRJCT Iris</span>
+          <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: 13 }}>Ironavtar</span>
           <span style={{ fontSize: 11, color: 'var(--text-3)', fontFamily: 'var(--font-mono)' }}>— Productivity &amp; Project Hub</span>
         </div>
         <span style={{ fontSize: 11, color: 'var(--text-3)', fontFamily: 'var(--font-mono)' }}>

@@ -58,7 +58,7 @@ export default function WaitlistAdmin() {
             </div>
             <div>
               <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: 15 }}>Waitlist Admin</div>
-              <div style={{ fontSize: 11, color: 'var(--text-3)' }}>PRJCT Iris · Restricted</div>
+              <div style={{ fontSize: 11, color: 'var(--text-3)' }}>Ironavtar · Restricted</div>
             </div>
           </div>
           {error && <div className="auth-error" style={{ marginBottom: 16 }}>{error}</div>}
@@ -96,7 +96,7 @@ export default function WaitlistAdmin() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32 }}>
           <div>
             <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: 22, fontWeight: 800, marginBottom: 4 }}>Waitlist Admin</h1>
-            <p style={{ fontSize: 12, color: 'var(--text-3)' }}>PRJCT Iris · <a href="/" style={{ color: 'var(--yellow)' }}>← Back to app</a></p>
+            <p style={{ fontSize: 12, color: 'var(--text-3)' }}>Ironavtar · <a href="/" style={{ color: 'var(--yellow)' }}>← Back to app</a></p>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             <button className="btn btn-ghost btn-sm" onClick={() => load()} disabled={loading}>

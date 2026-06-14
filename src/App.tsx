@@ -24,10 +24,10 @@ function Spinner() {
             <circle cx="14" cy="13" r="3" fill="#000"/>
           </svg>
         </div>
-        <span style={{ fontFamily: 'var(--font-heading)', fontSize: 18, fontWeight: 700 }}>PRJCT Iris</span>
+        <span style={{ fontFamily: 'var(--font-heading)', fontSize: 18, fontWeight: 700 }}>Ironavtar</span>
       </div>
       <div className="spinner" />
-      <span style={{ fontSize: 12, color: 'var(--text-3)', fontFamily: 'var(--font-mono)' }}>Loading PRJCT Iris…</span>
+      <span style={{ fontSize: 12, color: 'var(--text-3)', fontFamily: 'var(--font-mono)' }}>Loading Ironavtar…</span>
     </div>
   );
 }

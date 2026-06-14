@@ -69,8 +69,8 @@ export default function Waitlist() {
           </svg>
         </div>
         <div>
-          <div style={{ fontFamily: 'var(--font-heading)', fontSize: 18, fontWeight: 800 }}>PRJCT Iris</div>
-          <div style={{ fontSize: 10, color: 'var(--text-3)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: 1 }}>Productivity Hub</div>
+          <div style={{ fontFamily: 'var(--font-heading)', fontSize: 18, fontWeight: 800 }}>Ironavtar</div>
+          <div style={{ fontSize: 10, color: 'var(--text-3)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: 1 }}>The iron for your mind</div>
         </div>
       </div>
 

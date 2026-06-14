@@ -1,7 +1,7 @@
 const BASE = (import.meta.env.VITE_API_URL || '') + '/api';
 
 function getToken() {
-  return localStorage.getItem('prjct_iris_token');
+  return localStorage.getItem('ironavtar_token');
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {

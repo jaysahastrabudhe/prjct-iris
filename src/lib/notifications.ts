@@ -22,7 +22,7 @@ export function scheduleReminder(taskTitle: string, reminderAt: Date, taskId: st
   setTimeout(() => {
     showBrowserNotification(
       `⏰ Reminder: ${taskTitle}`,
-      'This task is due soon — check PRJCT Iris for details.',
+      'This task is due soon — check Ironavtar for details.',
     );
   }, delay);
 }

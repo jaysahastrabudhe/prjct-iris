@@ -28,7 +28,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/waitlist', waitlistRoutes);
 
-app.get('/api/health', (_, res) => res.json({ ok: true, app: 'PRJCT Iris', ai: !!process.env.GEMINI_API_KEY, email: !!resend }));
+app.get('/api/health', (_, res) => res.json({ ok: true, app: 'Ironavtar', ai: !!process.env.GEMINI_API_KEY, email: !!resend }));
 
 // Email reminder cron — check every 60s for tasks with reminder_at in the next minute
 async function sendReminderEmails() {
@@ -49,10 +49,10 @@ async function sendReminderEmails() {
     `;
     for (const task of due) {
       await resend.emails.send({
-        from: process.env.RESEND_FROM || 'PRJCT Iris <onboarding@resend.dev>',
+        from: process.env.RESEND_FROM || 'Ironavtar <onboarding@resend.dev>',
         to: [task.email],
         subject: `⏰ Reminder: ${task.title}`,
-        html: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto"><h2 style="color:#F5C518">⏰ Task Reminder</h2><p>Hi ${task.name},</p><p>Your task <strong>${task.title}</strong> is due now.</p><p style="color:#888;font-size:13px">— PRJCT Iris Productivity Hub</p></div>`,
+        html: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto"><h2 style="color:#F5C518">⏰ Task Reminder</h2><p>Hi ${task.name},</p><p>Your task <strong>${task.title}</strong> is due now.</p><p style="color:#888;font-size:13px">— Ironavtar The iron for your mind</p></div>`,
       }).catch(() => {});
     }
   } catch {}
@@ -63,7 +63,7 @@ async function start() {
     await initDB();
     console.log('✓ Database initialized');
     app.listen(PORT, () => {
-      console.log(`✓ PRJCT Iris server running on http://localhost:${PORT}`);
+      console.log(`✓ Ironavtar server running on http://localhost:${PORT}`);
       console.log(`  AI (Gemini): ${process.env.GEMINI_API_KEY ? '✓ enabled' : '✗ set GEMINI_API_KEY to enable'}`);
       console.log(`  Email (Resend): ${resend ? '✓ enabled' : '✗ set RESEND_API_KEY to enable'}`);
     });

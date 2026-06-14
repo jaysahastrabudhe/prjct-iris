@@ -53,8 +53,8 @@ export default function Login() {
             </svg>
           </div>
           <div className="auth-title">
-            <h2>PRJCT Iris</h2>
-            <span>Productivity Hub</span>
+            <h2>Ironavtar</h2>
+            <span>The iron for your mind</span>
           </div>
         </div>
 

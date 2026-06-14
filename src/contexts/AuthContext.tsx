@@ -15,14 +15,14 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem('prjct_iris_token'));
+  const [token, setToken] = useState<string | null>(() => localStorage.getItem('ironavtar_token'));
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (token) {
       api.auth.me()
         .then(setUser)
-        .catch(() => { localStorage.removeItem('prjct_iris_token'); setToken(null); })
+        .catch(() => { localStorage.removeItem('ironavtar_token'); setToken(null); })
         .finally(() => setLoading(false));
     } else {
       setLoading(false);
@@ -31,20 +31,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function login(email: string, password: string) {
     const { token: t, user: u } = await api.auth.login(email, password);
-    localStorage.setItem('prjct_iris_token', t);
+    localStorage.setItem('ironavtar_token', t);
     setToken(t);
     setUser(u);
   }
 
   async function register(email: string, name: string, password: string, role?: string, dev_code?: string) {
     const { token: t, user: u } = await api.auth.register(email, name, password, role, dev_code);
-    localStorage.setItem('prjct_iris_token', t);
+    localStorage.setItem('ironavtar_token', t);
     setToken(t);
     setUser(u);
   }
 
   function logout() {
-    localStorage.removeItem('prjct_iris_token');
+    localStorage.removeItem('ironavtar_token');
     setToken(null);
     setUser(null);
   }

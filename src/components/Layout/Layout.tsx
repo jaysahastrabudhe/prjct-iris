@@ -17,7 +17,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       tasks.forEach(t => {
         showBrowserNotification(
           `⏰ ${t.title}`,
-          `Due reminder — ${t.project_name || 'PRJCT Iris'}`,
+          `Due reminder — ${t.project_name || 'Ironavtar'}`,
         );
       });
     } catch {}

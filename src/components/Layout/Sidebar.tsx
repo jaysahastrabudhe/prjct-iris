@@ -60,8 +60,8 @@ export default function Sidebar() {
           </svg>
         </div>
         <div className="logo-text">
-          <h1>PRJCT Iris</h1>
-          <span>Productivity Hub</span>
+          <h1>Ironavtar</h1>
+          <span>The iron for your mind</span>
         </div>
       </div>
 
