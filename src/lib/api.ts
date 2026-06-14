@@ -14,12 +14,13 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
       ...options.headers,
     },
   });
-  const ct = res.headers.get('content-type') || '';
-  if (!ct.includes('application/json')) {
-    throw new Error(res.ok ? 'Unexpected server response' : `Server error ${res.status}`);
+  let data: any;
+  try {
+    data = await res.json();
+  } catch {
+    throw new Error(`Server error ${res.status}: could not connect to server`);
   }
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Request failed');
+  if (!res.ok) throw new Error(data?.error || `Request failed (${res.status})`);
   return data as T;
 }
 
