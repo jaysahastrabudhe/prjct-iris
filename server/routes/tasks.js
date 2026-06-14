@@ -7,12 +7,12 @@ router.use(requireAuth);
 
 router.get('/', async (req, res) => {
   const { project_id, status, assignee_id } = req.query;
+  const pid = project_id || null;
+  const st  = status || null;
+  const aid = assignee_id || null;
   try {
-    let conditions = [];
-    let params = [];
-
     const tasks = await sql`
-      SELECT t.*,
+      SELECT DISTINCT ON (t.id) t.*,
         u.name as assignee_name, u.avatar_color as assignee_color,
         p.name as project_name, p.color as project_color
       FROM tasks t
@@ -20,10 +20,10 @@ router.get('/', async (req, res) => {
       LEFT JOIN projects p ON t.project_id = p.id
       LEFT JOIN project_members pm ON pm.project_id = t.project_id
       WHERE (p.owner_id = ${req.user.id} OR pm.user_id = ${req.user.id})
-        ${project_id ? sql`AND t.project_id = ${project_id}` : sql``}
-        ${status ? sql`AND t.status = ${status}` : sql``}
-        ${assignee_id ? sql`AND t.assignee_id = ${assignee_id}` : sql``}
-      ORDER BY t.position ASC, t.created_at DESC
+        AND (${pid}::text IS NULL OR t.project_id::text = ${pid}::text)
+        AND (${st}::text  IS NULL OR t.status = ${st}::text)
+        AND (${aid}::text IS NULL OR t.assignee_id::text = ${aid}::text)
+      ORDER BY t.id, t.position ASC, t.created_at DESC
     `;
     res.json(tasks);
   } catch (err) {
