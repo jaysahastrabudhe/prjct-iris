@@ -3,7 +3,7 @@ import { LayoutDashboard, Columns3, CheckSquare, Users, Settings, LogOut, Zap } 
 import { useAuth } from '../../contexts/AuthContext';
 
 const NAV = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
+  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
   { icon: Columns3, label: 'Kanban', path: '/kanban' },
   { icon: CheckSquare, label: 'Tasks', path: '/tasks' },
   { icon: Users, label: 'Team', path: '/team' },
@@ -36,7 +36,7 @@ export default function Sidebar() {
       <nav className="sidebar-nav">
         <div className="nav-section-label">Workspace</div>
         {NAV.map(({ icon: Icon, label, path }) => {
-          const active = pathname === path || (path !== '/' && pathname.startsWith(path));
+          const active = pathname === path || (path !== '/dashboard' && pathname.startsWith(path));
           return (
             <div
               key={path}

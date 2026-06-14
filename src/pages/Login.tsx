@@ -1,11 +1,12 @@
 import { useState, FormEvent } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function Login() {
   const { login, register } = useAuth();
   const navigate = useNavigate();
-  const [mode, setMode] = useState<'login' | 'register'>('login');
+  const [params] = useSearchParams();
+  const [mode, setMode] = useState<'login' | 'register'>(params.get('mode') === 'register' ? 'register' : 'login');
   const [form, setForm] = useState({ email: '', name: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -20,7 +21,7 @@ export default function Login() {
       } else {
         await register(form.email, form.name, form.password);
       }
-      navigate('/');
+      navigate('/dashboard');
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -31,6 +32,12 @@ export default function Login() {
   return (
     <div className="auth-page">
       <div className="auth-card fade-in">
+        <button
+          onClick={() => navigate('/')}
+          style={{ background: 'none', color: 'var(--text-3)', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4, marginBottom: 24, padding: 0, cursor: 'pointer' }}
+        >
+          ← Back to home
+        </button>
         <div className="auth-logo">
           <div className="auth-logo-mark">
             <svg width="24" height="24" viewBox="0 0 18 18" fill="none">
