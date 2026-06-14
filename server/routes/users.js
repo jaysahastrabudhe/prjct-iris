@@ -70,4 +70,38 @@ router.put('/notifications/read-all', async (req, res) => {
   }
 });
 
+// Update own preferences
+router.put('/me/preferences', async (req, res) => {
+  const { email_reminders_enabled } = req.body;
+  try {
+    const [user] = await sql`
+      UPDATE users
+      SET email_reminders_enabled = COALESCE(${email_reminders_enabled ?? null}, email_reminders_enabled)
+      WHERE id = ${req.user.id}
+      RETURNING id, email, name, role, avatar_color, email_reminders_enabled, access_granted, created_at
+    `;
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Weekly wins: tasks completed in the last 7 days
+router.get('/me/weekly-wins', async (req, res) => {
+  try {
+    const wins = await sql`
+      SELECT t.id, t.title, t.priority, t.updated_at, p.name as project_name, p.color as project_color
+      FROM tasks t
+      LEFT JOIN projects p ON p.id = t.project_id
+      WHERE (t.assignee_id = ${req.user.id} OR p.owner_id = ${req.user.id})
+        AND t.status = 'done'
+        AND t.updated_at >= NOW() - INTERVAL '7 days'
+      ORDER BY t.updated_at DESC
+    `;
+    res.json(wins);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;

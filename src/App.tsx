@@ -11,6 +11,8 @@ import Team from './pages/Team';
 import Focus from './pages/Focus';
 import AIAssistant from './components/AI/AIAssistant';
 import CommandPalette from './components/CommandPalette';
+import Waitlist from './pages/Waitlist';
+import WaitlistAdmin from './pages/WaitlistAdmin';
 
 function Spinner() {
   return (
@@ -73,6 +75,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<PublicHome />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/waitlist" element={<Waitlist />} />
+          <Route path="/iris-admin" element={<WaitlistAdmin />} />
           <Route path="/*" element={<ProtectedRoutes />} />
         </Routes>
       </BrowserRouter>

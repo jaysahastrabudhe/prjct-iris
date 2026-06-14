@@ -7,7 +7,7 @@ interface AuthContextValue {
   token: string | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, name: string, password: string) => Promise<void>;
+  register: (email: string, name: string, password: string, role?: string, dev_code?: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -36,8 +36,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(u);
   }
 
-  async function register(email: string, name: string, password: string) {
-    const { token: t, user: u } = await api.auth.register(email, name, password);
+  async function register(email: string, name: string, password: string, role?: string, dev_code?: string) {
+    const { token: t, user: u } = await api.auth.register(email, name, password, role, dev_code);
     localStorage.setItem('prjct_iris_token', t);
     setToken(t);
     setUser(u);

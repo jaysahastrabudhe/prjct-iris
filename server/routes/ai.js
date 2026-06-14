@@ -1,8 +1,17 @@
 import { Router } from 'express';
 import { requireAuth } from '../middleware/auth.js';
+import { aiRateLimit, getAIUsage } from '../middleware/aiRateLimit.js';
 
 const router = Router();
 router.use(requireAuth);
+
+// Usage check — not rate-limited itself
+router.get('/usage', async (req, res) => {
+  const usage = await getAIUsage(req.user.id);
+  res.json(usage);
+});
+
+router.use(aiRateLimit);
 
 async function callGemini(prompt) {
   const key = process.env.GEMINI_API_KEY;

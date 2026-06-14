@@ -1,28 +1,35 @@
 import { useState, FormEvent } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Key, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function Login() {
   const { login, register } = useAuth();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const [mode, setMode] = useState<'login' | 'register'>(params.get('mode') === 'register' ? 'register' : 'login');
-  const [form, setForm] = useState({ email: '', name: '', password: '' });
+  const [form, setForm] = useState({ email: '', name: '', password: '', dev_code: '' });
+  const [showDevCode, setShowDevCode] = useState(!!params.get('code'));
   const [error, setError] = useState('');
+  const [waitlistRedirect, setWaitlistRedirect] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function submit(e: FormEvent) {
     e.preventDefault();
     setError('');
+    setWaitlistRedirect(false);
     setLoading(true);
     try {
       if (mode === 'login') {
         await login(form.email, form.password);
       } else {
-        await register(form.email, form.name, form.password);
+        await register(form.email, form.name, form.password, undefined, form.dev_code || undefined);
       }
       navigate('/dashboard');
     } catch (err: any) {
+      if (err.message?.includes('waitlist') || err.message?.includes('Access restricted')) {
+        setWaitlistRedirect(true);
+      }
       setError(err.message);
     } finally {
       setLoading(false);
@@ -51,7 +58,16 @@ export default function Login() {
           </div>
         </div>
 
-        {error && <div className="auth-error">{error}</div>}
+        {error && (
+          <div className="auth-error">
+            {error}
+            {waitlistRedirect && (
+              <div style={{ marginTop: 8 }}>
+                <a href="/waitlist" style={{ color: 'var(--yellow)', fontWeight: 600 }}>→ Join the waitlist</a>
+              </div>
+            )}
+          </div>
+        )}
 
         <form className="auth-form" onSubmit={submit}>
           {mode === 'register' && (
@@ -72,7 +88,7 @@ export default function Login() {
             <input
               className="input"
               type="email"
-              placeholder="you@agency.com"
+              placeholder="you@company.com"
               value={form.email}
               onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
               required
@@ -92,19 +108,55 @@ export default function Login() {
             />
           </div>
 
+          {/* Dev code — only shown on register */}
+          {mode === 'register' && (
+            <div>
+              <button
+                type="button"
+                onClick={() => setShowDevCode(s => !s)}
+                style={{
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  fontSize: 12, color: 'var(--text-3)', padding: 0, marginBottom: showDevCode ? 8 : 0,
+                  transition: 'color .15s',
+                }}
+              >
+                <Key size={12} />
+                Have a dev access code?
+                {showDevCode ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+              </button>
+              {showDevCode && (
+                <input
+                  className="input"
+                  placeholder="Enter dev code (e.g. IRIS-DEV-2025)"
+                  value={form.dev_code}
+                  onChange={e => setForm(f => ({ ...f, dev_code: e.target.value }))}
+                  style={{ fontFamily: 'var(--font-mono)', letterSpacing: '0.05em', textTransform: 'uppercase' }}
+                  autoFocus
+                />
+              )}
+              {!showDevCode && (
+                <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 6 }}>
+                  No code? <a href="/waitlist" style={{ color: 'var(--yellow)' }}>Join the waitlist →</a>
+                </div>
+              )}
+            </div>
+          )}
+
           <button className="btn btn-primary btn-lg" type="submit" disabled={loading} style={{ width: '100%', justifyContent: 'center', marginTop: 4 }}>
-            {loading ? <span className="spinner" style={{ width: 14, height: 14 }} /> : null}
+            {loading ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : null}
             {mode === 'login' ? 'Sign In' : 'Create Account'}
           </button>
         </form>
 
         <div className="auth-switch">
           {mode === 'login' ? "Don't have an account?" : 'Already have an account?'}
-          <button onClick={() => { setMode(m => m === 'login' ? 'register' : 'login'); setError(''); }}>
+          <button onClick={() => { setMode(m => m === 'login' ? 'register' : 'login'); setError(''); setWaitlistRedirect(false); }}>
             {mode === 'login' ? 'Register' : 'Sign in'}
           </button>
         </div>
       </div>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }

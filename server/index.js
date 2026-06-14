@@ -9,6 +9,7 @@ import projectRoutes from './routes/projects.js';
 import taskRoutes from './routes/tasks.js';
 import userRoutes from './routes/users.js';
 import aiRoutes from './routes/ai.js';
+import waitlistRoutes from './routes/waitlist.js';
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -25,6 +26,7 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/waitlist', waitlistRoutes);
 
 app.get('/api/health', (_, res) => res.json({ ok: true, app: 'PRJCT Iris', ai: !!process.env.GEMINI_API_KEY, email: !!resend }));
 
@@ -42,6 +44,7 @@ async function sendReminderEmails() {
         AND t.reminder_at <= NOW() + INTERVAL '1 minute'
         AND t.reminder_at >= NOW() - INTERVAL '2 minutes'
         AND t.status != 'done'
+        AND u.email_reminders_enabled = TRUE
       LIMIT 20
     `;
     for (const task of due) {
